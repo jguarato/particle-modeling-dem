@@ -1,4 +1,4 @@
-## Particles modeling with DEM
+## Particle modeling with DEM
 
 Computational code for modeling spherical particles considering interparticle collision based on the Discrete Element Method (DEM).
 
