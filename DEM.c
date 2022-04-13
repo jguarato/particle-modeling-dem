@@ -35,20 +35,21 @@ double poisson = 0.34;                  // Poisson
 double coef_rest = 1;                   // Restitution coefficient
 double coef_fric = 0.40;                // Dynamic friction coefficient between particles
 
-// Domain
+// Rectangular domain with the following corner points:
+// (xd1, yd1, zd1), (xd2, yd2, zd2), (xd3, yd3, zd3) and (xd4, yd4, zd4)
 double xd1 = 0, xd2 = 1, xd3 = 0, xd4 = 1;
 double yd1 = 0, yd2 = 2, yd3 = 0, yd4 = 2;
 double zd1 = 0, zd2 = 0, zd3 = 0, zd4 = 0;
 
 // Time parameters
-double t = 0;
-double tfinal = 2;
-double dt = 0.00001;
-int iter = 1;
+double tfinal = 2.0;                    // Final time
+double dt = 1.0e-5;                     // Time step
+double t = 0.0;                         // Initial time
+int iter = 1;                           // Initial iteration
 
 // Output files
 int print_step   = 100;                 // Saving frequency of results
-char output[20]  = "output"; 
+char output[20]  = "output";            // Name of output files
 
 
 // ==========================================================================================================
