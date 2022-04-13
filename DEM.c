@@ -74,7 +74,7 @@ int main() {
 
     // Hard-coded initial conditions setup
     n_particles = n_particles+np_iter;
-    x0=-0.03; y0 = 2;
+    x0 = -0.03; y0 = 2;
     v0 = -10;
 
     for (id=0;id<n_particles;id++) {
