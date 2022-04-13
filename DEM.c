@@ -74,7 +74,8 @@ int main() {
 
     // Hard-coded initial conditions setup
     n_particles = n_particles+np_iter;
-    y0 = 2;v0 = -10;x0=-0.03;
+    x0=-0.03; y0 = 2;
+    v0 = -10;
 
     for (id=0;id<n_particles;id++) {
         dem_collision_t *ptr_collision = (dem_collision_t *) malloc(sizeof(dem_collision_t));
