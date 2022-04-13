@@ -194,7 +194,6 @@ void delete_all_contacts(dem_collision_t *LIST){
         
         while(current != NULL){
             nextContact = current->next;
-            //free(current);
             current = nextContact;
         }
     }
@@ -580,7 +579,7 @@ void dem_contact_results(dem_particle_t *root) {
                     kt = kn/poisson_i;
                     dampct = beta*kt;
                     
-                    // Check in articles!
+                    // Need to check
                     
                     felt_x = -kt*overlapt*tx;
                     felt_y = -kt*overlapt*ty;
