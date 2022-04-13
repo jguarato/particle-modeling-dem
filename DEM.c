@@ -15,7 +15,9 @@
 
 #include "DEM.h"
 
+//
 // SETUP
+//
 
 // Gravity
 double gx = 0;
@@ -44,24 +46,26 @@ int iter = 1;
 int print_step   = 100;                 // Saving frequency of results
 char output[20]  = "output"; 
 
-
 // Domain
 double xd1 = 0, xd2 = 1, xd3 = 0, xd4 = 1;
 double yd1 = 0, yd2 = 2, yd3 = 0, yd4 = 2;
 double zd1 = 0, zd2 = 0, zd3 = 0, zd4 = 0;
 
-
+//
 // PROGRAM
+//
 
-void dem_init_part(dem_particle_t *root){
+void dem_init_part(dem_particle_t *root) {
     root->next = NULL;
 }
 
-void dem_init_coll(dem_collision_t *LIST){
+void dem_init_coll(dem_collision_t *LIST) {
     LIST->next = NULL;
 }
 
-void dem_add_particles(dem_particle_t *root, dem_collision_t *LIST, int id_part, double x0, double y0, double z0, double u0, double v0, double w0, double omega_x0, double omega_y0, double omega_z0) {
+void dem_add_particles(dem_particle_t *root, dem_collision_t *LIST, int id_part, 
+    double x0, double y0, double z0, double u0, double v0, double w0, 
+    double omega_x0, double omega_y0, double omega_z0) {
     
     double mp, Ip;
     mp = rho*((1./6.)*M_PI*pow(d_particle,3));
@@ -97,14 +101,14 @@ void dem_add_particles(dem_particle_t *root, dem_collision_t *LIST, int id_part,
     
     new->next = NULL;
     
-    if(root->next == NULL){
+    if(root->next == NULL) {
         root->next = new;
     }
     
     else{
         dem_particle_t *tmp = root->next;
         
-        while(tmp->next != NULL){
+        while(tmp->next != NULL) {
             tmp = tmp->next;
         }
         
@@ -114,13 +118,13 @@ void dem_add_particles(dem_particle_t *root, dem_collision_t *LIST, int id_part,
 }
 
 
-dem_particle_t *search_particle(dem_particle_t *root, int id_part){
+dem_particle_t *search_particle(dem_particle_t *root, int id_part) {
     
     dem_particle_t *tmp = root->next;
     
-    while(tmp != NULL){
+    while(tmp != NULL) {
         
-        if(tmp->idp == id_part){
+        if(tmp->idp == id_part) {
             break;
         }
         
@@ -141,14 +145,14 @@ void add_contact(dem_collision_t *LIST, int id_part) {
     
     new->next = NULL;
     
-    if(LIST->next == NULL){
+    if(LIST->next == NULL) {
         LIST->next = new;
     }
     
     else{
         dem_collision_t *tmp = LIST->next;
         
-        while(tmp->next != NULL){
+        while(tmp->next != NULL) {
             tmp = tmp->next;
         }
         
@@ -158,13 +162,13 @@ void add_contact(dem_collision_t *LIST, int id_part) {
 }
 
 
-void delete_contact(dem_collision_t *LIST, int aux){
+void delete_contact(dem_collision_t *LIST, int aux) {
     
     int count;
     
-    if(LIST->next != NULL){
+    if(LIST->next != NULL) {
         
-        if(aux==1){
+        if(aux==1) {
             dem_collision_t *tmp = LIST->next;
             LIST->next = tmp->next;
         }
@@ -173,7 +177,7 @@ void delete_contact(dem_collision_t *LIST, int aux){
             dem_collision_t *current = LIST->next;
             dem_collision_t *previous = LIST;
             
-            for(count=1; count<aux; count++){
+            for(count=1; count<aux; count++) {
                 previous = current;
                 current = current->next;
             }
@@ -185,14 +189,14 @@ void delete_contact(dem_collision_t *LIST, int aux){
 }
 
 
-void delete_all_contacts(dem_collision_t *LIST){
+void delete_all_contacts(dem_collision_t *LIST) {
     
-    if(LIST->next != NULL){
+    if(LIST->next != NULL) {
         dem_collision_t *current, *nextContact;
         
         current = LIST->next;
         
-        while(current != NULL){
+        while(current != NULL) {
             nextContact = current->next;
             current = nextContact;
         }
@@ -200,14 +204,14 @@ void delete_all_contacts(dem_collision_t *LIST){
 }
 
 
-int search_contact(dem_collision_t *LIST, int id_part){
+int search_contact(dem_collision_t *LIST, int id_part) {
     
     int aux = 1;
     dem_collision_t *tmp = LIST->next;
     
-    while(tmp != NULL){
+    while(tmp != NULL) {
         
-        if(tmp->idc == id_part){
+        if(tmp->idc == id_part) {
             return aux;
             break;
         }
@@ -234,11 +238,11 @@ void dem_bounding_box(dem_particle_t *root) {
 }
 
 
-void dem_overlap_save(dem_collision_t *LIST, int type, int aux, double overlap){
+void dem_overlap_save(dem_collision_t *LIST, int type, int aux, double overlap) {
     
     int count;
     
-    if(aux==1){
+    if(aux==1) {
         if(type==1) LIST->dem_overlapn = overlap;
         else LIST->dem_overlapt = overlap;
     }
@@ -247,7 +251,7 @@ void dem_overlap_save(dem_collision_t *LIST, int type, int aux, double overlap){
         dem_collision_t *current = LIST->next;
         dem_collision_t *previous = LIST;
         
-        for(count=1; count<aux; count++){
+        for(count=1; count<aux; count++) {
             previous = current;
             current = current->next;
         }
@@ -258,12 +262,12 @@ void dem_overlap_save(dem_collision_t *LIST, int type, int aux, double overlap){
 }
 
 
-double dem_overlap_value(dem_collision_t *LIST, int type, int aux){
+double dem_overlap_value(dem_collision_t *LIST, int type, int aux) {
     
     int count;
     double overlap;
     
-    if(aux==1){
+    if(aux==1) {
         if(type==1) overlap = LIST->dem_overlapn;
         else overlap = LIST->dem_overlapt;
     }
@@ -272,7 +276,7 @@ double dem_overlap_value(dem_collision_t *LIST, int type, int aux){
         dem_collision_t *current = LIST->next;
         dem_collision_t *previous = LIST;
         
-        for(count=1; count<aux; count++){
+        for(count=1; count<aux; count++) {
             previous = current;
             current = current->next;
         }
@@ -295,7 +299,7 @@ int dem_testing_contacts(dem_particle_t *root,int coll) {
     double xmax_j, xmin_j, ymax_j, ymin_j, zmax_j, zmin_j;
     
     
-    for (i=1;i<=n_particles;i++){
+    for (i=1;i<=n_particles;i++) {
         aux1 = 1;
         
         id_i = i-1;
@@ -310,7 +314,7 @@ int dem_testing_contacts(dem_particle_t *root,int coll) {
         zmax_i = ptr_dem->zmax;
         
         
-        for (j=1;j<=n_particles;j++){
+        for (j=1;j<=n_particles;j++) {
             
             id_j = j-1;
             
@@ -326,14 +330,14 @@ int dem_testing_contacts(dem_particle_t *root,int coll) {
             if (id_i==id_j) continue;
             
             else if (((xmin_j>=xmin_i && xmin_j<=xmax_i) ||
-             (xmax_j>=xmin_i && xmax_j<=xmax_i)) && ((ymin_j>=ymin_i && ymin_j<=ymax_i) || 
-             (ymax_j>=ymin_i && ymax_j<=ymax_i)) && ((zmin_j>=zmin_i && zmin_j<=zmax_i) || 
-             (zmax_j>=zmin_i && zmax_j<=zmax_i))) {
+                (xmax_j>=xmin_i && xmax_j<=xmax_i)) && ((ymin_j>=ymin_i && ymin_j<=ymax_i) || 
+                (ymax_j>=ymin_i && ymax_j<=ymax_i)) && ((zmin_j>=zmin_i && zmin_j<=zmax_i) || 
+                (zmax_j>=zmin_i && zmax_j<=zmax_i))) {
                 
                 ptr_dem = search_particle(dem_particles,id_i);
                 contact = search_contact(ptr_dem->LIST,id_j);
                 
-                if(contact == 0){
+                if(contact == 0) {
                     add_contact(ptr_dem->LIST,id_j);
                     ptr_dem->contact_dim = ptr_dem->contact_dim+1;
                     
@@ -348,7 +352,7 @@ int dem_testing_contacts(dem_particle_t *root,int coll) {
         }
     }
     
-    if(coll <= 0){
+    if(coll <= 0) {
         ptr_dem = search_particle(dem_particles,id_i);
         delete_all_contacts(ptr_dem->LIST);
     }
@@ -396,7 +400,7 @@ int dem_collision(dem_particle_t *root, int coll) {
                 ptr_dem = search_particle(dem_particles,id_i);
                 contact = search_contact(ptr_dem->LIST,id_j);
                 
-                if(contact == 0){
+                if(contact == 0) {
                     aux1 = -1;
                     continue;
                 }
@@ -427,8 +431,7 @@ int dem_collision(dem_particle_t *root, int coll) {
 }
 
 
-int sign(double num)
-{
+int sign(double num) {
     return (num > 0) - (num < 0);
 }
 
@@ -512,12 +515,12 @@ void dem_contact_results(dem_particle_t *root) {
                 ptr_dem = search_particle(dem_particles,id_i);
                 contact = search_contact(ptr_dem->LIST, id_j);
                 
-                if(contact == 0){
+                if(contact == 0) {
                     aux1 = -1;
                     continue;
                 }
                 
-                else if (contact != 0){
+                else if (contact != 0) {
                     
                     // Normal forces and velocities
                     overlapn = dem_overlap_value(ptr_dem->LIST,1,contact);
@@ -681,32 +684,32 @@ void dem_adv(dem_particle_t *root, int coll) {
 
     
     // Walls
-    if (ptr_dem->xmin < xd1){
+    if (ptr_dem->xmin < xd1) {
         ptr_dem->x = xd1+ptr_dem->diameter/2.0;
         ptr_dem->u = -ptr_dem->u;
     }
     
-    else if (ptr_dem->xmax > xd2){
+    else if (ptr_dem->xmax > xd2) {
         ptr_dem->x = xd2-ptr_dem->diameter/2.0;
         ptr_dem->u = -ptr_dem->u;
     }
     
-    if (ptr_dem->ymin < yd1){
+    if (ptr_dem->ymin < yd1) {
         ptr_dem->y = yd1+ptr_dem->diameter/2.0;
         ptr_dem->v = -ptr_dem->v;
     }
     
-    else if (ptr_dem->ymax > yd2){
+    else if (ptr_dem->ymax > yd2) {
         ptr_dem->y = yd2-ptr_dem->diameter/2.0;
         ptr_dem->v = -ptr_dem->v;
     }
     
-    if (ptr_dem->zmin < zd1){
+    if (ptr_dem->zmin < zd1) {
         ptr_dem->z = zd1+ptr_dem->diameter/2.0;
         ptr_dem->w = -ptr_dem->w;
     }
     
-    else if (ptr_dem->zmax > zd2){
+    else if (ptr_dem->zmax > zd2) {
         ptr_dem->z = zd2-ptr_dem->diameter/2.0;
         ptr_dem->w = -ptr_dem->w;
     }
@@ -731,7 +734,7 @@ void dem_print_vtk(dem_particle_t *root) {
     fprintf(pvtk,"# vtk DataFile Version 4.1\nPoints\nASCII\nDATASET POLYDATA\n");
     fprintf(pvtk,"POINTS	%i	double\n",n_particles);
     
-    for (id=0;id<n_particles;id++){
+    for (id=0;id<n_particles;id++) {
         ptr_dem = search_particle(dem_particles,id);
         fprintf(pvtk,"%6.16lf	%6.16lf	%6.16lf\n",ptr_dem->x, ptr_dem->y, ptr_dem->z);
     }
@@ -741,7 +744,7 @@ void dem_print_vtk(dem_particle_t *root) {
     fprintf(pvtk,"SCALARS	id float\n");
     fprintf(pvtk,"LOOKUP_TABLE default\n");
     
-    for (id=0;id<n_particles;id++){
+    for (id=0;id<n_particles;id++) {
         ptr_dem = search_particle(dem_particles,id);
         fprintf(pvtk,"%i\n",ptr_dem->idp);
     }
@@ -749,7 +752,7 @@ void dem_print_vtk(dem_particle_t *root) {
     fprintf(pvtk,"SCALARS	diameter float\n");
     fprintf(pvtk,"LOOKUP_TABLE default\n");
     
-    for (id=0;id<n_particles;id++){
+    for (id=0;id<n_particles;id++) {
         ptr_dem = search_particle(dem_particles,id);
         fprintf(pvtk,"%6.16f\n",ptr_dem->diameter);
     }
@@ -757,7 +760,7 @@ void dem_print_vtk(dem_particle_t *root) {
     fprintf(pvtk,"SCALARS	u float\n");
     fprintf(pvtk,"LOOKUP_TABLE default\n");
     
-    for (id=0;id<n_particles;id++){
+    for (id=0;id<n_particles;id++) {
         ptr_dem = search_particle(dem_particles,id);
         fprintf(pvtk,"%6.16f\n",ptr_dem->u);
     }
@@ -765,7 +768,7 @@ void dem_print_vtk(dem_particle_t *root) {
     fprintf(pvtk,"SCALARS	v float\n");
     fprintf(pvtk,"LOOKUP_TABLE default\n");
     
-    for (id=0;id<n_particles;id++){
+    for (id=0;id<n_particles;id++) {
         ptr_dem = search_particle(dem_particles,id);
         fprintf(pvtk,"%6.16f\n",ptr_dem->v);
     }
@@ -773,7 +776,7 @@ void dem_print_vtk(dem_particle_t *root) {
     fprintf(pvtk,"SCALARS	w float\n");
     fprintf(pvtk,"LOOKUP_TABLE default\n");
     
-    for (id=0;id<n_particles;id++){
+    for (id=0;id<n_particles;id++) {
         ptr_dem = search_particle(dem_particles,id);
         fprintf(pvtk,"%6.16f\n",ptr_dem->w);
     }
@@ -781,7 +784,7 @@ void dem_print_vtk(dem_particle_t *root) {
     fprintf(pvtk,"SCALARS	omega_x float\n");
     fprintf(pvtk,"LOOKUP_TABLE default\n");
     
-    for (id=0;id<n_particles;id++){
+    for (id=0;id<n_particles;id++) {
         ptr_dem = search_particle(dem_particles,id);
         fprintf(pvtk,"%6.16f\n",ptr_dem->omega_x);
     }
@@ -789,7 +792,7 @@ void dem_print_vtk(dem_particle_t *root) {
     fprintf(pvtk,"SCALARS	omega_y float\n");
     fprintf(pvtk,"LOOKUP_TABLE default\n");
     
-    for (id=0;id<n_particles;id++){
+    for (id=0;id<n_particles;id++) {
         ptr_dem = search_particle(dem_particles,id);
         fprintf(pvtk,"%6.16f\n",ptr_dem->omega_y);
     }
@@ -797,7 +800,7 @@ void dem_print_vtk(dem_particle_t *root) {
     fprintf(pvtk,"SCALARS	omega_z float\n");
     fprintf(pvtk,"LOOKUP_TABLE default\n");
     
-    for (id=0;id<n_particles;id++){
+    for (id=0;id<n_particles;id++) {
         ptr_dem = search_particle(dem_particles,id);
         fprintf(pvtk,"%6.16f\n",ptr_dem->omega_z);
     }
@@ -805,7 +808,7 @@ void dem_print_vtk(dem_particle_t *root) {
     fprintf(pvtk,"SCALARS	Fcontact_x float\n");
     fprintf(pvtk,"LOOKUP_TABLE default\n");
     
-    for (id=0;id<n_particles;id++){
+    for (id=0;id<n_particles;id++) {
         ptr_dem = search_particle(dem_particles,id);
         fprintf(pvtk,"%6.16f\n",ptr_dem->Fcontact_x);
     }
@@ -813,7 +816,7 @@ void dem_print_vtk(dem_particle_t *root) {
     fprintf(pvtk,"SCALARS	Fcontact_y float\n");
     fprintf(pvtk,"LOOKUP_TABLE default\n");
     
-    for (id=0;id<n_particles;id++){
+    for (id=0;id<n_particles;id++) {
         ptr_dem = search_particle(dem_particles,id);
         fprintf(pvtk,"%6.16f\n",ptr_dem->Fcontact_y);
     }
@@ -821,7 +824,7 @@ void dem_print_vtk(dem_particle_t *root) {
     fprintf(pvtk,"SCALARS	Fcontact_z float\n");
     fprintf(pvtk,"LOOKUP_TABLE default\n");
     
-    for (id=0;id<n_particles;id++){
+    for (id=0;id<n_particles;id++) {
         ptr_dem = search_particle(dem_particles,id);
         fprintf(pvtk,"%6.16f\n",ptr_dem->Fcontact_z);
     }
@@ -829,7 +832,7 @@ void dem_print_vtk(dem_particle_t *root) {
     fprintf(pvtk,"SCALARS	Mcontact_x float\n");
     fprintf(pvtk,"LOOKUP_TABLE default\n");
     
-    for (id=0;id<n_particles;id++){
+    for (id=0;id<n_particles;id++) {
         ptr_dem = search_particle(dem_particles,id);
         fprintf(pvtk,"%6.16f\n",ptr_dem->Mcontact_x);
     }
@@ -837,7 +840,7 @@ void dem_print_vtk(dem_particle_t *root) {
     fprintf(pvtk,"SCALARS	Mcontact_y float\n");
     fprintf(pvtk,"LOOKUP_TABLE default\n");
     
-    for (id=0;id<n_particles;id++){
+    for (id=0;id<n_particles;id++) {
         ptr_dem = search_particle(dem_particles,id);
         fprintf(pvtk,"%6.16f\n",ptr_dem->Mcontact_y);
     }
@@ -845,7 +848,7 @@ void dem_print_vtk(dem_particle_t *root) {
     fprintf(pvtk,"SCALARS	Mcontact_z float\n");
     fprintf(pvtk,"LOOKUP_TABLE default\n");
     
-    for (id=0;id<n_particles;id++){
+    for (id=0;id<n_particles;id++) {
         ptr_dem = search_particle(dem_particles,id);
         fprintf(pvtk,"%6.16f\n",ptr_dem->Mcontact_z);
     }
@@ -876,7 +879,7 @@ int main() {
     n_particles = n_particles+np_iter;
     y0 = 2;v0 = -10;x0=-0.03;
 
-    for (id=0;id<n_particles;id++){
+    for (id=0;id<n_particles;id++) {
         dem_collision_t *ptr_collision = (dem_collision_t *) malloc(sizeof(dem_collision_t));
         dem_init_coll(ptr_collision);
         
@@ -890,8 +893,8 @@ int main() {
     id_iter = id_iter+np_iter;
     
     
-    while (t <= tfinal){
-        if(iter%print_step == 0){
+    while (t <= tfinal) {
+        if(iter%print_step == 0) {
             
             printf("------------------------------\n");
             printf("time iter        = %d\n",iter);
@@ -903,7 +906,7 @@ int main() {
         coll = 0;
 
         
-        for (id=0;id<n_particles;id++){
+        for (id=0;id<n_particles;id++) {
             ptr_dem = search_particle(dem_particles,id);
             dem_bounding_box(ptr_dem);
             
@@ -911,21 +914,21 @@ int main() {
         
         coll = dem_testing_contacts(dem_particles,coll);
 
-        if (coll > 0){
+        if (coll > 0) {
             coll = dem_collision(dem_particles,coll);
         }
         
-        if (coll > 0){
+        if (coll > 0) {
             dem_contact_results(dem_particles);
         }
         
-        for (id=0;id<n_particles;id++){
+        for (id=0;id<n_particles;id++) {
             ptr_dem = search_particle(dem_particles,id);
             dem_adv(ptr_dem,coll);
 
         }
         
-        if(iter%print_step == 0){
+        if(iter%print_step == 0) {
             dem_print_vtk(dem_particles);
         }
         
