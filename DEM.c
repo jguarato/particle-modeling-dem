@@ -15,9 +15,9 @@
 
 #include "DEM.h"
 
-//
+// ==========================================================================================================
 // SETUP
-//
+// ==========================================================================================================
 
 // Gravity
 double gx = 0;
@@ -25,7 +25,6 @@ double gy = -9.81;
 double gz = 0;
 
 // Particles properties
-
 int n_particles = 0;                    // Initial number of particles
 int id_iter = 0;                        // Initial particle id
 int np_iter = 2;                        // Number of particles per iteration
@@ -36,7 +35,12 @@ double poisson = 0.34;                  // Poisson
 double coef_rest = 1;                   // Restitution coefficient
 double coef_fric = 0.40;                // Dynamic friction coefficient between particles
 
-// Initial conditions
+// Domain
+double xd1 = 0, xd2 = 1, xd3 = 0, xd4 = 1;
+double yd1 = 0, yd2 = 2, yd3 = 0, yd4 = 2;
+double zd1 = 0, zd2 = 0, zd3 = 0, zd4 = 0;
+
+// Time parameters
 double t = 0;
 double tfinal = 2;
 double dt = 0.00001;
@@ -46,14 +50,94 @@ int iter = 1;
 int print_step   = 100;                 // Saving frequency of results
 char output[20]  = "output"; 
 
-// Domain
-double xd1 = 0, xd2 = 1, xd3 = 0, xd4 = 1;
-double yd1 = 0, yd2 = 2, yd3 = 0, yd4 = 2;
-double zd1 = 0, zd2 = 0, zd3 = 0, zd4 = 0;
 
-//
+// ==========================================================================================================
 // PROGRAM
-//
+// ==========================================================================================================
+int main() {
+    
+    dem_particle_t *ptr_dem;
+    dem_particle_t *dem_particles = (dem_particle_t *) malloc(sizeof(dem_particle_t));
+    
+    int coll, id;
+    double x0, y0, z0, u0, v0, w0, omega_x0, omega_y0, omega_z0;
+    char command1[50], command2[50];
+
+
+    // Creating output directory
+    sprintf(command1, "rm -rf %s",output);
+    system(command1);
+    sprintf(command2, "mkdir -p %s",output);
+    system(command2);
+    
+    dem_init_part(dem_particles);
+
+    // Hard-coded initial conditions setup
+    n_particles = n_particles+np_iter;
+    y0 = 2;v0 = -10;x0=-0.03;
+
+    for (id=0;id<n_particles;id++) {
+        dem_collision_t *ptr_collision = (dem_collision_t *) malloc(sizeof(dem_collision_t));
+        dem_init_coll(ptr_collision);
+        
+        // Hard-coded initial conditions setup
+        x0 = x0+0.03; y0 = y0-0.5; z0 = 0;
+        u0 = 0; v0 = v0+5; w0 = 0;
+        omega_x0 = 0; omega_y0 = 0; omega_z0 = 0;
+        
+        dem_add_particles(dem_particles,ptr_collision,id,x0,y0,z0,u0,v0,w0,omega_x0,omega_y0,omega_z0);
+    }
+    id_iter = id_iter+np_iter;
+    
+    
+    while (t <= tfinal) {
+        if(iter%print_step == 0) {
+            
+            printf("------------------------------\n");
+            printf("time iter        = %d\n",iter);
+            printf("time step        = %.5e\n",dt);
+            printf("elapsed time     = %.5e\n",t);
+            printf("------------------------------\n\n");
+        }
+        
+        coll = 0;
+
+        
+        for (id=0;id<n_particles;id++) {
+            ptr_dem = search_particle(dem_particles,id);
+            dem_bounding_box(ptr_dem);
+            
+        }
+        
+        coll = dem_testing_contacts(dem_particles,coll);
+
+        if (coll > 0) {
+            coll = dem_collision(dem_particles,coll);
+        }
+        
+        if (coll > 0) {
+            dem_contact_results(dem_particles);
+        }
+        
+        for (id=0;id<n_particles;id++) {
+            ptr_dem = search_particle(dem_particles,id);
+            dem_adv(ptr_dem,coll);
+
+        }
+        
+        if(iter%print_step == 0) {
+            dem_print_vtk(dem_particles);
+        }
+        
+        
+        t = t+dt;
+        iter = iter+1;
+        
+    }
+    
+    return 0;
+}
+
 
 void dem_init_part(dem_particle_t *root) {
     root->next = NULL;
@@ -854,89 +938,4 @@ void dem_print_vtk(dem_particle_t *root) {
     }
     
     fclose(pvtk);
-}
-
-
-int main() {
-    
-    dem_particle_t *ptr_dem;
-    dem_particle_t *dem_particles = (dem_particle_t *) malloc(sizeof(dem_particle_t));
-    
-    int coll, id;
-    double x0, y0, z0, u0, v0, w0, omega_x0, omega_y0, omega_z0;
-    char command1[50], command2[50];
-
-
-    // Creating output directory
-    sprintf(command1, "rm -rf %s",output);
-    system(command1);
-    sprintf(command2, "mkdir -p %s",output);
-    system(command2);
-    
-    dem_init_part(dem_particles);
-
-    // Hard-coded initial conditions setup
-    n_particles = n_particles+np_iter;
-    y0 = 2;v0 = -10;x0=-0.03;
-
-    for (id=0;id<n_particles;id++) {
-        dem_collision_t *ptr_collision = (dem_collision_t *) malloc(sizeof(dem_collision_t));
-        dem_init_coll(ptr_collision);
-        
-        // Hard-coded initial conditions setup
-        x0 = x0+0.03; y0 = y0-0.5; z0 = 0;
-        u0 = 0; v0 = v0+5; w0 = 0;
-        omega_x0 = 0; omega_y0 = 0; omega_z0 = 0;
-        
-        dem_add_particles(dem_particles,ptr_collision,id,x0,y0,z0,u0,v0,w0,omega_x0,omega_y0,omega_z0);
-    }
-    id_iter = id_iter+np_iter;
-    
-    
-    while (t <= tfinal) {
-        if(iter%print_step == 0) {
-            
-            printf("------------------------------\n");
-            printf("time iter        = %d\n",iter);
-            printf("time step        = %.5e\n",dt);
-            printf("elapsed time     = %.5e\n",t);
-            printf("------------------------------\n\n");
-        }
-        
-        coll = 0;
-
-        
-        for (id=0;id<n_particles;id++) {
-            ptr_dem = search_particle(dem_particles,id);
-            dem_bounding_box(ptr_dem);
-            
-        }
-        
-        coll = dem_testing_contacts(dem_particles,coll);
-
-        if (coll > 0) {
-            coll = dem_collision(dem_particles,coll);
-        }
-        
-        if (coll > 0) {
-            dem_contact_results(dem_particles);
-        }
-        
-        for (id=0;id<n_particles;id++) {
-            ptr_dem = search_particle(dem_particles,id);
-            dem_adv(ptr_dem,coll);
-
-        }
-        
-        if(iter%print_step == 0) {
-            dem_print_vtk(dem_particles);
-        }
-        
-        
-        t = t+dt;
-        iter = iter+1;
-        
-    }
-    
-    return 0;
 }

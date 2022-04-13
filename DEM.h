@@ -45,4 +45,4 @@ void dem_contact_results(dem_particle_t *root);
 void dem_adv(dem_particle_t *root, int coll);
 void dem_print_vtk(dem_particle_t *root);
 
-#endif /* DEM_h */
+#endif
